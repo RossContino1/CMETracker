@@ -1,0 +1,14 @@
+CME Tracker Help
+
+Add an entry by entering a date, title, credit type, category, and number of hours, then choose Add.
+
+Dates use yyyy-mm-dd format, such as 2026-04-18.
+
+Select a row in the table to load it into the form. After editing the fields, choose Update.
+
+Use Start and End at the bottom of the window to filter the table and report to a license cycle or any other date range.
+
+The report totals hours by category and also shows a simple osteopathic target check:
+100 total hours with at least 20 AOA Category 1A hours.
+
+Your records are saved in data/cme-records.csv.
