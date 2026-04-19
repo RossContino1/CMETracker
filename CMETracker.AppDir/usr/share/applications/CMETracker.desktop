@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=CMETracker
+Exec=AppRun
+Icon=caduceus-icon
+Terminal=false
+Categories=Office;Education;Science;
+Comment=CME tracking application
+StartupWMClass=com.ross.cmetracker.CMETrackerApp
