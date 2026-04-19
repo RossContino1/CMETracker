@@ -16,11 +16,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -45,12 +48,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class CmeTrackerApp extends JFrame {
+public final class CmeTrackerApp extends JFrame {
     private static final String ICON_RESOURCE = "/cme/resources/caduceus-icon.png";
     private static final String HELP_RESOURCE = "/cme/resources/help.txt";
-    private static final String WEBSITE_URL = "https://bytesbreadbbq.com";
+    private static final String WEBSITE_URL = "https://bytesbreadbbq.com/cmetracker/";
+    private static final String GITHUB_URL = "https://github.com/RossContino1/CMETracker";
     private static final String DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=XS9MXN5AE5P3S";
     private static final String APP_VERSION = "1.0.0";
+    private static final Path DONATION_PROMPT_MARKER = Path.of("data", ".donation-prompt-seen");
 
     private final CmeRepository repository = new CmeRepository(Path.of("data", "cme-records.csv"));
     private final List<CmeRecord> records = new ArrayList<>();
@@ -77,7 +82,7 @@ public class CmeTrackerApp extends JFrame {
         reportArea.setEditable(false);
         reportArea.setLineWrap(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(980, 650));
+        setMinimumSize(new Dimension(920, 540));
         if (appIcon != null) {
             setIconImage(appIcon);
         }
@@ -160,8 +165,11 @@ public class CmeTrackerApp extends JFrame {
 
         JScrollPane tableScroll = new JScrollPane(table);
         JScrollPane reportScroll = new JScrollPane(reportArea);
+        table.setPreferredScrollableViewportSize(new Dimension(900, 220));
+        reportArea.setRows(9);
+        reportArea.setColumns(88);
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScroll, reportScroll);
-        split.setResizeWeight(0.62);
+        split.setResizeWeight(0.58);
 
         add(form, BorderLayout.NORTH);
         add(split, BorderLayout.CENTER);
@@ -234,8 +242,11 @@ public class CmeTrackerApp extends JFrame {
         try {
             records.add(readForm(null));
             clearForm();
-            saveRecords();
+            boolean saved = saveRecords();
             refreshView();
+            if (saved) {
+                showDonationPromptIfNeeded();
+            }
         } catch (IllegalArgumentException ex) {
             showError(ex.getMessage());
         }
@@ -304,12 +315,22 @@ public class CmeTrackerApp extends JFrame {
             tableModel.setRecords(filtered);
             reportArea.setText(CmeReports.buildReport(filtered, start, end));
             totalsLabel.setText(String.format(
-                    "Totals: %.2f hours | AOA 1A: %.2f",
+                    "Totals: %.2f hours%s",
                     CmeReports.totalHours(filtered),
-                    CmeReports.aoaCategory1AHours(filtered)));
+                    formatTypeTotals(filtered)));
         } catch (IllegalArgumentException ex) {
             showError(ex.getMessage());
         }
+    }
+
+    private static String formatTypeTotals(List<CmeRecord> records) {
+        Map<String, Double> totalsByType = CmeReports.totalHoursByCreditType(records);
+        if (totalsByType.isEmpty()) {
+            return "";
+        }
+        return totalsByType.entrySet().stream()
+                .map(entry -> entry.getKey() + ": " + String.format("%.2f", entry.getValue()))
+                .collect(Collectors.joining(" | ", " | ", ""));
     }
 
     private void clearForm() {
@@ -330,11 +351,44 @@ public class CmeTrackerApp extends JFrame {
         }
     }
 
-    private void saveRecords() {
+    private boolean saveRecords() {
         try {
             repository.save(records);
+            return true;
         } catch (IOException ex) {
             showError("Could not save CME records: " + ex.getMessage());
+            return false;
+        }
+    }
+
+    private void showDonationPromptIfNeeded() {
+        if (Files.exists(DONATION_PROMPT_MARKER)) {
+            return;
+        }
+
+        Object[] options = {"Donate", "Cancel"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "If you found this application helpful, consider supporting the project.",
+                "Support CME Tracker",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        markDonationPromptSeen();
+        if (choice == 0) {
+            openLink(DONATE_URL);
+        }
+    }
+
+    private void markDonationPromptSeen() {
+        try {
+            Files.createDirectories(DONATION_PROMPT_MARKER.getParent());
+            Files.writeString(DONATION_PROMPT_MARKER, "seen\n", StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            showError("Could not save donation prompt preference: " + ex.getMessage());
         }
     }
 
@@ -448,12 +502,15 @@ public class CmeTrackerApp extends JFrame {
         aboutPanel.add(license);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton githubButton = new JButton("GitHub");
         JButton websiteButton = new JButton("Website");
         JButton donateButton = new JButton("Donate");
         JButton closeButton = new JButton("Close");
+        githubButton.addActionListener(event -> openLink(GITHUB_URL));
         websiteButton.addActionListener(event -> openLink(WEBSITE_URL));
         donateButton.addActionListener(event -> openLink(DONATE_URL));
         closeButton.addActionListener(event -> dialog.dispose());
+        buttonPanel.add(githubButton);
         buttonPanel.add(websiteButton);
         buttonPanel.add(donateButton);
         buttonPanel.add(closeButton);

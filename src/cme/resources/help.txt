@@ -8,7 +8,9 @@ Select a row in the table to load it into the form. After editing the fields, ch
 
 Use Start and End at the bottom of the window to filter the table and report to a license cycle or any other date range.
 
-The report totals hours by category and also shows a simple osteopathic target check:
-100 total hours with at least 20 AOA Category 1A hours.
+The report totals hours by category and credit type for the current date range.
+
+CME Tracker does not guarantee compliance with any state license requirement.
+It only lists and totals the CME hours that you manually enter.
 
 Your records are saved in data/cme-records.csv.

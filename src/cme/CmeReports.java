@@ -24,16 +24,16 @@ public class CmeReports {
                         Collectors.summingDouble(CmeRecord::getHours)));
     }
 
-    public static double totalHours(List<CmeRecord> records) {
-        return records.stream().mapToDouble(CmeRecord::getHours).sum();
+    public static Map<String, Double> totalHoursByCreditType(List<CmeRecord> records) {
+        return records.stream()
+                .collect(Collectors.groupingBy(
+                        CmeRecord::getCreditType,
+                        TreeMap::new,
+                        Collectors.summingDouble(CmeRecord::getHours)));
     }
 
-    public static double aoaCategory1AHours(List<CmeRecord> records) {
-        return records.stream()
-                .filter(record -> record.getCreditType().equalsIgnoreCase("AOA"))
-                .filter(record -> record.getCategory().equalsIgnoreCase("1A"))
-                .mapToDouble(CmeRecord::getHours)
-                .sum();
+    public static double totalHours(List<CmeRecord> records) {
+        return records.stream().mapToDouble(CmeRecord::getHours).sum();
     }
 
     public static String buildReport(List<CmeRecord> records, LocalDate start, LocalDate end) {
@@ -67,13 +67,14 @@ public class CmeReports {
                         .append(String.format("%.2f", hours))
                         .append("\n"));
 
-        double total = totalHours(records);
-        double aoa1A = aoaCategory1AHours(records);
-        report.append("\nTotal hours: ").append(String.format("%.2f", total)).append("\n");
-        report.append("AOA Category 1A hours: ").append(String.format("%.2f", aoa1A)).append("\n");
-        report.append("Osteopathic target: ")
-                .append(total >= 100 && aoa1A >= 20 ? "Met" : "Not met")
-                .append(" (100 total, 20 AOA 1A)\n");
+        report.append("\nTotals by Credit Type\n");
+        totalHoursByCreditType(records).forEach((type, hours) ->
+                report.append(type)
+                        .append(": ")
+                        .append(String.format("%.2f", hours))
+                        .append("\n"));
+
+        report.append("\nTotal hours: ").append(String.format("%.2f", totalHours(records))).append("\n");
 
         return report.toString();
     }

@@ -28,9 +28,8 @@ The app lets you:
 - Add, edit, and delete CME entries.
 - Track date, title, credit type, category, and credit hours.
 - Pick dates from a built-in calendar for entries and report ranges.
-- Filter by date range.
-- Total hours by category for the current date range.
-- Check a simple osteopathic two-year requirement target: 100 total hours, with at least 20 AOA Category 1A hours.
+- Filter the table and report by date range.
+- Total hours by category and credit type for the current date range.
 - Print a text report or save the report directly as a PDF file.
 - Use a File menu with Exit.
 - Open Help Contents and About CME Tracker from the Help menu.
