@@ -55,7 +55,7 @@ Then launch **CME Tracker** from your application menu.
 
 Full details and downloads:
 
-👉 https://bytesbreadbbq.com/cmetracker
+👉 https://bytesbreadbbq.com/cme-tracking-app-for-doctors/
 
 ---
 
