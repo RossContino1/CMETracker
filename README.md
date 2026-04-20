@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://bytesbreadbbq.com/cme-tracker-app-for-doctors">🌐 Website</a> •
+  <a href="https://bytesbreadbbq.com/cme-tracking-app-for-doctors">🌐 Website</a> •
   <a href="https://github.com/RossContino1/CMETracker/releases">⬇️ Download</a>
 </p>
 
