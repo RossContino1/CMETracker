@@ -98,6 +98,16 @@ java -jar CMETracker.jar
 
 ---
 
+## ☕ Support Leonardo
+
+CMETracker is free to use. If CMETracker saves you time or simplifies your workflow, consider supporting development:
+
+[![Support via PayPal](https://img.shields.io/badge/Support-PayPal-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=XS9MXN5AE5P3S)
+
+Your support helps keep the code crispy and the files smokin’ hot.
+
+---
+
 ## 📄 License
 
 MIT License — see `LICENSE.txt`
