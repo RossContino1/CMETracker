@@ -98,7 +98,7 @@ java -jar CMETracker.jar
 
 ---
 
-## ☕ Support Leonardo
+## ☕ Support CMETracker
 
 CMETracker is free to use. If CMETracker saves you time or simplifies your workflow, consider supporting development:
 
